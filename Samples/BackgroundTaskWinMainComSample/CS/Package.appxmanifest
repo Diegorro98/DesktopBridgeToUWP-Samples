@@ -2,6 +2,7 @@
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
@@ -12,6 +13,8 @@
     Publisher="CN=Contoso"
     Version="1.0.0.0" />
 
+  <mp:PhoneIdentity PhoneProductId="c32cd286-bf88-4b69-9f44-d655364cd6b9" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+
   <Properties>
     <DisplayName>SampleBackgroundTaskAppWinMainCS</DisplayName>
     <PublisherDisplayName>Contoso</PublisherDisplayName>
@@ -19,7 +22,8 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22000.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
   </Dependencies>
 
   <Resources>
@@ -47,22 +51,32 @@
 
         <uap:SplashScreen Image="Assets\Splash-sdk.png"/>
       </uap:VisualElements>
-
-      <Extensions>
-        <com:Extension Category="windows.comServer">
-          <com:ComServer>
-            <com:ExeServer Executable="BackgroundTaskWinMainComSample_CS\BackgroundTaskWinMainComSample_CS.exe" DisplayName="BackgroundTaskWinMainComSample_CS">
-              <com:Class Id="087DC07B-FDA5-4C01-8BB7-18863C3EE597" DisplayName="Time Triggered Sample Background Task" />
-            </com:ExeServer>
-          </com:ComServer>
-        </com:Extension>
-      </Extensions>
-
+		<Extensions>
+			<Extension Category="windows.backgroundTasks" EntryPoint="Microsoft.Windows.ApplicationModel.Background.UniversalBGTask.Task">
+				<BackgroundTasks>
+					<Task Type="general"/>
+				</BackgroundTasks>
+			</Extension>
+			<com:Extension Category="windows.comServer">
+				<com:ComServer>
+					<com:ExeServer Executable="BackgroundTaskWinMainComSample_CS.exe" Arguments="-RegisterForBGTaskServer" DisplayName="BackgroundTaskWinMainComSample_CS"
+									 LaunchAndActivationPermission="O:PSG:BUD:(A;;11;;;IU)(A;;11;;;S-1-15-2-1)S:(ML;;NX;;;LW)">
+						<com:Class Id="087DC07B-FDA5-4C01-8BB7-18863C3EE597" DisplayName="Time Triggered Sample Background Task" />
+					</com:ExeServer>
+				</com:ComServer>
+			</com:Extension>
+		</Extensions>
     </Application>
   </Applications>
-
-  <Capabilities>
-    <Capability Name="internetClient" />
+	<Extensions>
+		<Extension Category="windows.activatableClass.inProcessServer">
+			<InProcessServer>
+				<Path>Microsoft.Windows.ApplicationModel.Background.UniversalBGTask.dll</Path>
+				<ActivatableClass ActivatableClassId="Microsoft.Windows.ApplicationModel.Background.UniversalBGTask.Task" ThreadingModel="both"/>
+			</InProcessServer>
+		</Extension>
+	</Extensions>
+	<Capabilities>
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 </Package>

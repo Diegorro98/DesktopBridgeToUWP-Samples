@@ -97,11 +97,13 @@ namespace BackgroundTaskWinMainComSample_CS
                 }
             }
 
-            BackgroundTaskBuilder builder = new BackgroundTaskBuilder();
+            var builder = new Microsoft.Windows.ApplicationModel.Background.BackgroundTaskBuilder
+            {
+                Name = taskName
+            };
 
             builder.SetTrigger(trigger);
             builder.SetTaskEntryPointClsid(entryPointClsid);
-            builder.Name = taskName;
 
             BackgroundTaskRegistration registration;
             try
@@ -168,9 +170,14 @@ namespace BackgroundTaskWinMainComSample_CS
         public MainWindow()
         {
             InitializeComponent();
+            var allRegistrations = BackgroundTaskRegistration.AllTasks;
+            foreach (var taskPair in allRegistrations)
+            {
+                IBackgroundTaskRegistration _task = taskPair.Value;
+                _task.Unregister(true);
+            }
 
-            RegisterBackgroundTaskWithSystem(new TimeTrigger(15, false), typeof(TimeTriggeredTask).GUID, typeof(TimeTriggeredTask).Name);
-            RegisterProcessForBackgroundTask<TimeTriggeredTask, IBackgroundTask>();
+            RegisterBackgroundTaskWithSystem(new SystemTrigger(SystemTriggerType.TimeZoneChange, false), typeof(TimeTriggeredTask).GUID, "a");
         }
 
         private void myButton_Click(object sender, RoutedEventArgs e)
