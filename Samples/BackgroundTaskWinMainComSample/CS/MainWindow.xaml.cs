@@ -178,6 +178,7 @@ namespace BackgroundTaskWinMainComSample_CS
             }
 
             RegisterBackgroundTaskWithSystem(new SystemTrigger(SystemTriggerType.TimeZoneChange, false), typeof(TimeTriggeredTask).GUID, "a");
+            RegisterProcessForBackgroundTask<TimeTriggeredTask, IBackgroundTask>();
         }
 
         private void myButton_Click(object sender, RoutedEventArgs e)
